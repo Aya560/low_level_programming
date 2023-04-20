@@ -1,19 +1,30 @@
 #include <stdio.h>
 #include <stdarg.h>
 
+/**
+ * print_all - prints any combination of char, int, float or string arguments
+ *
+ * @format: a list of types of arguments passed to the function
+ *           c: char
+ *           i: integer
+ *           f: float
+ *           s: char * (if the string is NULL, print (nil) instead)
+ * Return: void
+ */
 void print_all(const char * const format, ...)
 {
     va_list args;
     char c;
     int i;
-    float f;
+    double f;
     char *s;
+    int len = 0;
 
     va_start(args, format);
 
-    while (*format)
+    while (*(format + len) != '\0')
     {
-        switch (*format)
+        switch (*(format + len))
         {
             case 'c':
                 c = va_arg(args, int);
@@ -24,7 +35,7 @@ void print_all(const char * const format, ...)
                 printf("%d", i);
                 break;
             case 'f':
-                f = va_arg(args, double);  // we need to promote float to double
+                f = va_arg(args, double);
                 printf("%f", f);
                 break;
             case 's':
@@ -34,15 +45,17 @@ void print_all(const char * const format, ...)
                 else
                     printf("%s", s);
                 break;
+            default:
+                len++;
+                continue;
         }
 
-        format++;
+        len++;
 
-        if (*format)  // if there are more arguments to come
-        {
-            if (*format == 'c' || *format == 'i' || *format == 'f' || *format == 's')
-                printf(", ");
-        }
+        if (*(format + len) != '\0' &&
+            (*(format + len) == 'c' || *(format + len) == 'i'
+             || *(format + len) == 'f' || *(format + len) == 's'))
+            printf(", ");
     }
 
     printf("\n");
